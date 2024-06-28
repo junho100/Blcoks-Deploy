@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blcoks</title>
+    <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        background-color: #ffffff;
+        overflow: hidden;
+      }
+      body {
+        padding: 80px 20px 0px 20px;
+        box-sizing: border-box;
+      }
+      .container {
+        display: grid;
+        grid-template-columns: repeat(10, 1fr);
+        grid-template-rows: repeat(4, 1fr);
+        width: 100%;
+        height: calc(100vh - 220px);
+        gap: 0; /* 박스 사이 간격 제거 */
+      }
+      .box {
+        background-color: #f0f0f0;
+        overflow: hidden;
+      }
+      .box.large {
+        grid-column: span 2;
+      }
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      footer {
+        background-color: #ffffff;
+        color: #333;
+        padding: 0;
+        margin-top: 30px;
+        height: 80px; /* 푸터 높이를 더 늘림 */
+        display: flex;
+        align-items: flex-end; /* 텍스트를 아래쪽으로 정렬 */
+      }
+      .footer-content {
+        max-width: 600px;
+        font-size: 0.8em;
+      }
+      .footer-content p {
+        margin: 2px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container" id="imageContainer"></div>
+    <footer>
+      <div class="footer-content">
+        <p>“Blcoks” / 210 cm x 118.8 cm / Graphite on Paper / 2024</p>
+        <p>Sungmin Cho</p>
+        <p>IG : manyong_._</p>
+      </div>
+    </footer>
+
+    <script>
+      const largeBoxCount = 15;
+      const smallBoxCount = 10;
+
+      const largeImageUrls = Array.from(
+        { length: largeBoxCount },
+        (_, i) => `./images/big.jpg`
+      );
+      const smallImageUrls = Array.from(
+        { length: smallBoxCount },
+        (_, i) => `./images/small.jpg`
+      );
+
+      function createImageBoxes() {
+        const container = document.getElementById("imageContainer");
+
+        largeImageUrls.forEach((url, index) => {
+          const box = document.createElement("div");
+          box.className = "box large";
+          const img = document.createElement("img");
+          img.src = url;
+          img.alt = `Large Image ${index + 1}`;
+          box.appendChild(img);
+          container.appendChild(box);
+        });
+
+        smallImageUrls.forEach((url, index) => {
+          const box = document.createElement("div");
+          box.className = "box small";
+          const img = document.createElement("img");
+          img.src = url;
+          img.alt = `Small Image ${index + 1}`;
+          box.appendChild(img);
+          container.appendChild(box);
+        });
+      }
+
+      function shuffleBoxes() {
+        const boxes = Array.from(document.querySelectorAll(".box"));
+        const container = document.getElementById("imageContainer");
+        container.innerHTML = "";
+
+        let remainingBoxes = [...boxes].sort(() => Math.random() - 0.5);
+        let grid = Array(4)
+          .fill()
+          .map(() => Array(10).fill(0));
+
+        for (let row = 0; row < 4; row++) {
+          for (let col = 0; col < 10; col++) {
+            if (grid[row][col] === 0) {
+              const box = remainingBoxes.shift();
+              if (
+                box.classList.contains("large") &&
+                col < 9 &&
+                grid[row][col + 1] === 0
+              ) {
+                grid[row][col] = 1;
+                grid[row][col + 1] = 1;
+                box.style.gridColumn = `${col + 1} / span 2`;
+                box.style.gridRow = `${row + 1}`;
+                col++;
+              } else if (box.classList.contains("small")) {
+                grid[row][col] = 1;
+                box.style.gridColumn = `${col + 1}`;
+                box.style.gridRow = `${row + 1}`;
+              } else {
+                remainingBoxes.push(box);
+                col--;
+              }
+              container.appendChild(box);
+            }
+          }
+        }
+      }
+
+      window.addEventListener("load", () => {
+        createImageBoxes();
+        shuffleBoxes();
+      });
+    </script>
+  </body>
+</html>
