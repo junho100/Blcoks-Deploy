@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Blocks</title>
     <style>
+      /* 기존 스타일 유지 */
       body,
       html {
         margin: 0;
@@ -236,6 +237,19 @@
         container.style.height = `${containerHeight}px`;
       }
 
+      // 새로운 함수: 랜덤 시간 간격 선택
+      function getRandomInterval() {
+        const intervals = [3000, 8000, 15000]; // 3초, 8초, 15초 (밀리초 단위)
+        return intervals[Math.floor(Math.random() * intervals.length)];
+      }
+
+      // 새로운 함수: 자동 셔플 및 다음 셔플 예약
+      function autoShuffle() {
+        shuffleBoxes();
+        const nextInterval = getRandomInterval();
+        setTimeout(autoShuffle, nextInterval);
+      }
+
       window.addEventListener("load", () => {
         createImageBoxes();
         shuffleBoxes();
@@ -247,6 +261,9 @@
             openModal(this);
           });
         });
+
+        // 자동 셔플 시작
+        autoShuffle();
       });
 
       window.addEventListener("resize", adjustLayout);
